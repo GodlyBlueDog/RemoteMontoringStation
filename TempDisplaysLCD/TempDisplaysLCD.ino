@@ -15,6 +15,18 @@ products from Adafruit!
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 #include "Adafruit_miniTFTWing.h"
 
+#include <Adafruit_MotorShield.h>
+
+// Create the motor shield object with the default I2C address
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+// Or, create it with a different I2C address (say for stacking)
+// Adafruit_MotorShield AFMS = Adafruit_MotorShield(0x61); 
+
+// Select which 'port' M1, M2, M3 or M4. In this case, M1
+Adafruit_DCMotor *myMotor = AFMS.getMotor(4);
+// You can also make another motor on port M2
+//Adafruit_DCMotor *myOtherMotor = AFMS.getMotor(2);
+
 Adafruit_miniTFTWing ss;
 #define TFT_RST    -1    // we use the seesaw for resetting to save a pin
  #define TFT_CS   14
@@ -28,6 +40,7 @@ Adafruit_ADT7410 tempsensor = Adafruit_ADT7410();
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
 float p = 3.1415926;
+float c;
 
 void setup() {
   Serial.begin(9600);
@@ -37,6 +50,16 @@ void setup() {
     while(1);
   }
   else Serial.println("seesaw started");
+
+AFMS.begin();  // create with the default frequency 1.6KHz
+  //AFMS.begin(1000);  // OR with a different frequency, say 1KHz
+
+   // Set the speed to start, from 0 (off) to 255 (max speed)
+  myMotor->setSpeed(150);
+  myMotor->run(FORWARD);
+  // turn on motor
+  myMotor->run(RELEASE);
+
 
   ss.tftReset();
   ss.setBacklight(0x0); //set the backlight fully on
@@ -73,6 +96,11 @@ void loop() {
 String tempC = String(c);
 
 tftDrawText(tempC, ST77XX_WHITE);
+dcMotorActivate();
+Serial.print(c); Serial.println("Mototr Temp");
+
+
+
                                                                                                                                                                                                                        
   
   delay(1000);
@@ -85,4 +113,17 @@ void tftDrawText(String text, uint16_t color) {
   tft.setTextColor(color);
   tft.setTextWrap(true);
   tft.print(text);
+  delay(500);
+  tft.fillScreen(ST77XX_BLACK);
+
+}
+
+void dcMotorActivate(){
+ myMotor->run(FORWARD);
+if( c < 25){
+myMotor->setSpeed(0);
+delay(100);
+}
+
+  
 }

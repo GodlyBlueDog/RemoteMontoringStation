@@ -27,7 +27,7 @@ Adafruit_miniTFTWing ss;
    #define TFT_DC   10
    #define TFT_CS   4
 #elif defined(ARDUINO_STM32_FEATHER)
-   #define TFT_DC   PB4
+   #define TFT_DC   PB4 
    #define TFT_CS   PA15
 #elif defined(ARDUINO_NRF52832_FEATHER)  /* BSP 0.6.5 and higher! */
    #define TFT_DC   11
