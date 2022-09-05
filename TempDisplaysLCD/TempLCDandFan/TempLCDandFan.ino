@@ -1,11 +1,11 @@
 
 /**************************************************************************/
 /*!
-This is a demo for the Adafruit ADT7410 breakout
-----> http://www.adafruit.com/products/4089
-Adafruit invests time and resources providing this open source code,
-please support Adafruit and open-source hardware by purchasing
-products from Adafruit!
+  This is a demo for the Adafruit ADT7410 breakout
+  ----> http://www.adafruit.com/products/4089
+  Adafruit invests time and resources providing this open source code,
+  please support Adafruit and open-source hardware by purchasing
+  products from Adafruit!
 */
 /**************************************************************************/
 
@@ -15,12 +15,13 @@ products from Adafruit!
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 #include "Adafruit_miniTFTWing.h"
 
+
 #include <Adafruit_MotorShield.h>
 
 // Create the motor shield object with the default I2C address
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 // Or, create it with a different I2C address (say for stacking)
-// Adafruit_MotorShield AFMS = Adafruit_MotorShield(0x61); 
+// Adafruit_MotorShield AFMS = Adafruit_MotorShield(0x61);
 
 // Select which 'port' M1, M2, M3 or M4. In this case, M1
 Adafruit_DCMotor *myMotor = AFMS.getMotor(4);
@@ -29,8 +30,8 @@ Adafruit_DCMotor *myMotor = AFMS.getMotor(4);
 
 Adafruit_miniTFTWing ss;
 #define TFT_RST    -1    // we use the seesaw for resetting to save a pin
- #define TFT_CS   14
-   #define TFT_DC 32
+#define TFT_CS   14
+#define TFT_DC 32
 
 
 // Create the ADT7410 temperature sensor object
@@ -39,22 +40,20 @@ Adafruit_ADT7410 tempsensor = Adafruit_ADT7410();
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
-float p = 3.1415926;
-float c;
 
 void setup() {
   Serial.begin(9600);
 
   if (!ss.begin()) {
     Serial.println("seesaw init error!");
-    while(1);
+    while (1);
   }
   else Serial.println("seesaw started");
 
-AFMS.begin();  // create with the default frequency 1.6KHz
+  AFMS.begin();  // create with the default frequency 1.6KHz
   //AFMS.begin(1000);  // OR with a different frequency, say 1KHz
 
-   // Set the speed to start, from 0 (off) to 255 (max speed)
+  // Set the speed to start, from 0 (off) to 255 (max speed)
   myMotor->setSpeed(150);
   myMotor->run(FORWARD);
   // turn on motor
@@ -70,9 +69,9 @@ AFMS.begin();  // create with the default frequency 1.6KHz
   tft.setRotation(3);
   tft.fillScreen(ST77XX_BLACK);
 
-  
+
   Serial.println("ADT7410 demo");
-  
+
   // Make sure the sensor is found, you can also pass in a different i2c
   // address with tempsensor.begin(0x49) for example
   if (!tempsensor.begin()) {
@@ -88,21 +87,21 @@ void loop() {
   // Read and print out the temperature, then convert to *F
   float c = tempsensor.readTempC();
   float f = c * 9.0 / 5.0 + 32;
-  Serial.print("Temp: "); Serial.print(c); Serial.print("*C\t"); 
+  Serial.print("Temp: "); Serial.print(c); Serial.print("*C\t");
   Serial.print(f); Serial.println("*F");
 
-//tftDrawText(c, ST77XX_BLUE);
+  //tftDrawText(c, ST77XX_BLUE);
 
-String tempC = String(c);
+  String tempC = String(c);
 
-tftDrawText(tempC, ST77XX_WHITE);
-dcMotorActivate();
-Serial.print(c); Serial.println("Mototr Temp");
+  tftDrawText(tempC, ST77XX_WHITE);
+  dcMotorActivate(25.0);
+  Serial.print(c); Serial.println("Mototr Temp");
 
 
 
-                                                                                                                                                                                                                       
-  
+
+
   delay(1000);
 }
 
@@ -118,12 +117,16 @@ void tftDrawText(String text, uint16_t color) {
 
 }
 
-void dcMotorActivate(){
- myMotor->run(FORWARD);
-if( c < 25){
-myMotor->setSpeed(0);
-delay(100);
-}
+void dcMotorActivate(float temperatureThreshold ) {
+  float c = tempsensor.readTempC();
+  myMotor->setSpeed(255);
+  if (c < temperatureThreshold) {
+    myMotor->run(RELEASE);
+    Serial.println("stop");
+  } else {
+    myMotor->run(FORWARD);
+    Serial.println("forward");
+  }
 
-  
+
 }
