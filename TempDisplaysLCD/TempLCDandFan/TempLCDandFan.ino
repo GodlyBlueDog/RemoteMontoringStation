@@ -15,6 +15,14 @@
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 #include "Adafruit_miniTFTWing.h"
 
+// ESP32Servo Start
+#include <ESP32Servo.h>
+Servo myservo;  // create servo object to control a servo
+int servoPin = 12;
+boolean blindsOpen = false;
+// ESP32Servo End
+
+
 
 #include <Adafruit_MotorShield.h>
 
@@ -69,6 +77,14 @@ void setup() {
   tft.setRotation(3);
   tft.fillScreen(ST77XX_BLACK);
 
+// ESP32Servo Start
+ESP32PWM::allocateTimer(0);
+ESP32PWM::allocateTimer(1);
+ESP32PWM::allocateTimer(2);
+ESP32PWM::allocateTimer(3);
+myservo.setPeriodHertz(50);    // standard 50 hz servo
+myservo.attach(servoPin, 1000, 2000); // attaches the servo on pin 18 to the servo object
+// ESP32Servo End
 
   Serial.println("ADT7410 demo");
 
@@ -96,13 +112,14 @@ void loop() {
 
   tftDrawText(tempC, ST77XX_WHITE);
   dcMotorActivate(25.0);
+  windowBlinds();
   Serial.print(c); Serial.println("Mototr Temp");
 
 
 
 
 
-  delay(1000);
+  delay(500);
 }
 
 
@@ -129,4 +146,17 @@ void dcMotorActivate(float temperatureThreshold ) {
   }
 
 
+}
+
+
+void windowBlinds() {
+  uint32_t buttons = ss.readButtons();
+  if(! (buttons & TFTWING_BUTTON_A)){
+    if (blindsOpen){
+        myservo.write(0);
+    } else {
+      myservo.write(180);
+    }
+    blindsOpen = !blindsOpen;
+  }
 }
