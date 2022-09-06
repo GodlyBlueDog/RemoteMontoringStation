@@ -111,7 +111,7 @@ void loop() {
   String tempC = String(c);
 
   tftDrawText(tempC, ST77XX_WHITE);
-  dcMotorActivate(25.0);
+  dcMotorActivate(23.0);
   windowBlinds();
   Serial.print(c); Serial.println("Mototr Temp");
 
@@ -124,14 +124,13 @@ void loop() {
 
 
 void tftDrawText(String text, uint16_t color) {
+  tft.print(text);
+  tft.fillScreen(ST77XX_BLACK);
   tft.setCursor(0, 0);
   tft.setTextSize(3);
   tft.setTextColor(color);
   tft.setTextWrap(true);
   tft.print(text);
-  delay(500);
-  tft.fillScreen(ST77XX_BLACK);
-
 }
 
 void dcMotorActivate(float temperatureThreshold ) {
