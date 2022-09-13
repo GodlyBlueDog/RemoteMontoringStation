@@ -167,7 +167,7 @@ void loop() {
   String tempC = String(c);
 
   tftDrawText(tempC, ST77XX_WHITE);
-  dcMotorActivate(26.0);
+  dcMotorActivate(24.0);
  windowBlinds();
   Serial.print(c); Serial.println("Mototr Temp");
 
