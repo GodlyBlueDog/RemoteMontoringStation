@@ -36,6 +36,13 @@ int servoPin = 12;
 boolean blindsOpen = false;
 // ESP32Servo End
 
+//RFID
+#include <SPI.h>
+#include <MFRC522.h>
+
+//LED
+#define LEDRed 27
+#define LEDGreen 33
 
 // RTC Start - Remove if unnecessary
 #include "RTClib.h"
@@ -58,9 +65,12 @@ Adafruit_ADT7410 tempsensor = Adafruit_ADT7410();
 
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
+//RFID
+#define SS_PIN  21  // ES32 Feather
+#define RST_PIN 17 // esp32 Feather. Could be others.
 
-
-
+MFRC522 rfid(SS_PIN, RST_PIN);
+bool safeLocked = true;
 
 
 void setup() {
@@ -104,7 +114,7 @@ void setup() {
   rtc.start();
   pinMode(LED_BUILTIN, OUTPUT);
 
- if (!ss.begin()) {
+  if (!ss.begin()) {
     Serial.println("seesaw init error!");
     while (1);
   }
@@ -119,6 +129,13 @@ void setup() {
   // turn on motor
   myMotor->run(RELEASE);
 
+  //RFID
+  SPI.begin(); // init SPI bus
+  rfid.PCD_Init(); // init MFRC522
+  pinMode(LEDRed, OUTPUT);
+  pinMode(LEDGreen, OUTPUT);
+  digitalWrite(LEDRed, LOW);
+  digitalWrite(LEDGreen, LOW);
 
   ss.tftReset();
   ss.setBacklight(0x0); //set the backlight fully on
@@ -129,14 +146,14 @@ void setup() {
   tft.setRotation(3);
   tft.fillScreen(ST77XX_BLACK);
 
-// ESP32Servo Start
-ESP32PWM::allocateTimer(0);
-ESP32PWM::allocateTimer(1);
-ESP32PWM::allocateTimer(2);
-ESP32PWM::allocateTimer(3);
-myservo.setPeriodHertz(50);    // standard 50 hz servo
-myservo.attach(servoPin, 1000, 2000); // attaches the servo on pin 18 to the servo object
-// ESP32Servo End
+  // ESP32Servo Start
+  ESP32PWM::allocateTimer(0);
+  ESP32PWM::allocateTimer(1);
+  ESP32PWM::allocateTimer(2);
+  ESP32PWM::allocateTimer(3);
+  myservo.setPeriodHertz(50);    // standard 50 hz servo
+  myservo.attach(servoPin, 1000, 2000); // attaches the servo on pin 18 to the servo object
+  // ESP32Servo End
 
   Serial.println("ADT7410 demo");
 
@@ -153,31 +170,13 @@ myservo.attach(servoPin, 1000, 2000); // attaches the servo on pin 18 to the ser
 
 
 void loop() {
-
   builtinLED();
-
-  // Read and print out the temperature, then convert to *F
-  float c = tempsensor.readTempC();
-  float f = c * 9.0 / 5.0 + 32;
-  Serial.print("Temp: "); Serial.print(c); Serial.print("*C\t");
-  Serial.print(f); Serial.println("*F");
-
-  //tftDrawText(c, ST77XX_BLUE);
-
-  String tempC = String(c);
-
+  rfidRead();
+  String tempC = tempetureSens();
   tftDrawText(tempC, ST77XX_WHITE);
   dcMotorActivate(24.0);
- windowBlinds();
-  Serial.print(c); Serial.println("Mototr Temp");
-
-
-
-
-
-  
-
-
+  windowBlinds();
+  safeStatusDisplay();
   delay(LOOPDELAY); // To allow time to publish new code.
 }
 
@@ -228,10 +227,12 @@ void dcMotorActivate(float temperatureThreshold ) {
   myMotor->setSpeed(255);
   if (c < temperatureThreshold) {
     myMotor->run(RELEASE);
-    Serial.println("stop");
+    //Serial.println("stop");
+  //  logEvent("Fan Stop");
   } else {
     myMotor->run(FORWARD);
-    Serial.println("forward");
+    //Serial.println("forward");
+    //logEvent("Fan Start");
   }
 
 
@@ -239,12 +240,76 @@ void dcMotorActivate(float temperatureThreshold ) {
 
 void windowBlinds() {
   uint32_t buttons = ss.readButtons();
-  if(! (buttons & TFTWING_BUTTON_A)){
-    if (blindsOpen){
-        myservo.write(0);
+  if (! (buttons & TFTWING_BUTTON_A)) {
+    if (blindsOpen) {
+      myservo.write(0);
+      logEvent("Blinds Closed");
     } else {
       myservo.write(180);
+      logEvent("Blinds Open");
     }
     blindsOpen = !blindsOpen;
+  }
+}
+
+String tempetureSens() {
+
+  // Read and print out the temperature, then convert to *F
+  float c = tempsensor.readTempC();
+  float f = c * 9.0 / 5.0 + 32;
+  //Serial.print("Temp: "); Serial.print(c); Serial.print("*C\t");
+  //Serial.print(f); Serial.println("*F");
+
+
+
+  String tempC = String(c);
+
+  return tempC;
+
+}
+
+void rfidRead() {
+
+  String uidOfCardRead = "";
+  String validCardUID = "54 59 179 115";
+
+  if (rfid.PICC_IsNewCardPresent()) { // new tag is available
+    if (rfid.PICC_ReadCardSerial()) { // NUID has been readed
+      MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
+      for (int i = 0; i < rfid.uid.size; i++) {
+        uidOfCardRead += rfid.uid.uidByte[i] < 0x10 ? " 0" : " ";
+        uidOfCardRead += rfid.uid.uidByte[i];
+      }
+      Serial.println(uidOfCardRead);
+
+      rfid.PICC_HaltA(); // halt PICC
+      rfid.PCD_StopCrypto1(); // stop encryption on PCD
+      uidOfCardRead.trim();
+      if (uidOfCardRead == validCardUID) {
+        safeLocked = false;
+        logEvent("Safe Unlocked");
+       
+      } else {
+        safeLocked = true;
+        logEvent("Safe Locked");
+
+      }
+    }
+  }
+
+}
+
+void safeStatusDisplay() {
+  /*
+     Outputs the status of the Safe Lock to the LEDS
+     Red LED = Locked
+     Green LED = Unlocked.
+  */
+  if (safeLocked) {
+    digitalWrite(LEDRed, HIGH);
+    digitalWrite(LEDGreen, LOW);
+  } else {
+    digitalWrite(LEDRed, LOW);
+    digitalWrite(LEDGreen, HIGH);
   }
 }
