@@ -313,3 +313,12 @@ void safeStatusDisplay() {
     digitalWrite(LEDGreen, HIGH);
   }
 }
+
+
+void safeLockout(){
+
+
+
+
+  
+}
