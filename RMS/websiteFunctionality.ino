@@ -55,6 +55,26 @@ void routesConfiguration() {
     logEvent("Log Event Download");
     request->send(SPIFFS, "/logEvents.csv", "text/html", true);
   });
+
+server.on("/SafeLock",  HTTP_GET, [](AsyncWebServerRequest * request) {
+  if (!request->authenticate(http_username, http_password))
+    return request->requestAuthentication();
+      safeLocked = true;
+  logEvent("Safe Locked via Website");
+
+  request->send(SPIFFS, "/dashboard.html", "text/html", false, processor);
+});
+
+server.on("/SafeUnlock",  HTTP_GET, [](AsyncWebServerRequest * request) {
+  if (!request->authenticate(http_username, http_password))
+    return request->requestAuthentication();
+     safeLocked = false;
+  logEvent("Safe Unlocked via Website");
+ 
+  request->send(SPIFFS, "/dashboard.html", "text/html", false, processor);
+});
+
+  
 }
 
 String getDateTime() {
@@ -63,6 +83,8 @@ String getDateTime() {
   sprintf(csvReadableDate, "%02d:%02d:%02d %02d/%02d/%02d",  rightNow.hour(), rightNow.minute(), rightNow.second(), rightNow.day(), rightNow.month(), rightNow.year());
   return csvReadableDate;
 }
+
+
 
 String processor(const String& var) {
   /*
@@ -81,6 +103,19 @@ String processor(const String& var) {
   if (var == "TEMPERATURE") {
   return String(tempsensor.readTempC());
 }
+
+//if (var == "SAFESTATE"){
+ // if( safeLocked == true)
+ // {
+ //   return ;
+ // }
+ // else {
+
+ //  return false;
+//  }
+  
+ 
+//}
 
 
   // Default "catch" which will return nothing in case the HTML has no variable to replace.
