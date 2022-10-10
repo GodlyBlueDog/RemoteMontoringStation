@@ -14,6 +14,8 @@
 #include <ESPAsyncWebServer.h>
 
 #include <Adafruit_MotorShield.h>
+bool fanEnabled = false;            // If the fan is on or off.
+bool automaticFanControl = true;    // Automatic or manual control
 
 #include <Adafruit_MotorShield.h>
 
@@ -174,9 +176,11 @@ void loop() {
   rfidRead();
   String tempC = tempetureSens();
   tftDrawText(tempC, ST77XX_WHITE);
-  dcMotorActivate(24.0);
+  //dcMotorActivate(24.0);
+  fanControl();
   windowBlinds();
   safeStatusDisplay();
+  safeLockout(); 
   delay(LOOPDELAY); // To allow time to publish new code.
 }
 
@@ -222,21 +226,30 @@ void tftDrawText(String text, uint16_t color) {
   tft.print(text);
 }
 
-void dcMotorActivate(float temperatureThreshold ) {
+void automaticFan(float temperatureThreshold ) {
   float c = tempsensor.readTempC();
   myMotor->setSpeed(255);
   if (c < temperatureThreshold) {
-    myMotor->run(RELEASE);
-    //Serial.println("stop");
-  //  logEvent("Fan Stop");
+ fanEnabled = false;
   } else {
     myMotor->run(FORWARD);
-    //Serial.println("forward");
-    //logEvent("Fan Start");
+ fanEnabled = true;
   }
 
 
 }
+
+void fanControl() {
+  if (automaticFanControl) {
+    automaticFan(22.0);
+  }
+  if (fanEnabled) {
+    myMotor->run(FORWARD);
+  } else {
+    myMotor->run(RELEASE);
+  }
+}
+
 
 void windowBlinds() {
   uint32_t buttons = ss.readButtons();
@@ -315,10 +328,34 @@ void safeStatusDisplay() {
 }
 
 
-void safeLockout(){
+bool safeLockout(){
+  unsigned long previousMillis = 0;        // will store last time LED was updated
 
+// constants won't change:
+const long interval = 1000;           // interval at which to blink (milliseconds)
 
+// here is where you'd put code that needs to be running all the time.
 
+  // check to see if it's time to blink the LED; that is, if the difference
+  // between the current time and last time you blinked the LED is bigger than
+  // the interval at which you want to blink the LED.
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+
+    // if the LED is off turn it on and vice-versa:
+    if (safeLocked == true) {
+      safeLocked = true;
+    } else {
+      safeLocked = false;
+    }
+
+//     set the LED with the ledState of the variable:
+    digitalWrite(safeLocked, safeLocked);
+  }
+return safeLockout ;
 
   
 }
