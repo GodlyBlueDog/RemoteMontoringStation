@@ -94,11 +94,21 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
+    //tftDrawText("Connecting to WiFi..", ST77XX_RED);
   }
+ // tft.fillScreen(ST77XX_BLACK);
   Serial.println();
   Serial.print("Connected to the Internet");
   Serial.print("IP address: ");
+  //String ip = WiFi.localIP().toString();
   Serial.println(WiFi.localIP());
+
+  // Display IP on TFT
+  //tft.setCursor(0, 60);
+  //tft.setTextSize(2);
+ // tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+  //tft.setTextWrap(true);
+  //tft.print(WiFi.localIP());
 
   routesConfiguration(); // Reads routes from routesManagement
 
@@ -174,8 +184,7 @@ void setup() {
 void loop() {
   builtinLED();
   rfidRead();
-  String tempC = tempetureSens();
-  tftDrawText(tempC, ST77XX_WHITE);
+  tftDrawText(tempetureSens(), ST77XX_WHITE);
   //dcMotorActivate(24.0);
   fanControl();
   windowBlinds();
@@ -217,13 +226,18 @@ void logEvent(String dataToLog) {
 }
 
 void tftDrawText(String text, uint16_t color) {
-  tft.print(text);
-  tft.fillScreen(ST77XX_BLACK);
+  
+ 
   tft.setCursor(0, 0);
   tft.setTextSize(3);
-  tft.setTextColor(color);
+  tft.setTextColor(color, ST77XX_BLACK);
   tft.setTextWrap(true);
   tft.print(text);
+   tft.setCursor(0, 60);
+  tft.setTextSize(2);
+  tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+  tft.setTextWrap(true);
+  tft.print(WiFi.localIP());
 }
 
 void automaticFan(float temperatureThreshold ) {
@@ -272,11 +286,8 @@ String tempetureSens() {
   float f = c * 9.0 / 5.0 + 32;
   //Serial.print("Temp: "); Serial.print(c); Serial.print("*C\t");
   //Serial.print(f); Serial.println("*F");
-
-
-
   String tempC = String(c);
-
+  String tempF = String(f);
   return tempC;
 
 }
@@ -346,16 +357,16 @@ const long interval = 1000;           // interval at which to blink (millisecond
     previousMillis = currentMillis;
 
     // if the LED is off turn it on and vice-versa:
-    if (safeLocked == true) {
-      safeLocked = true;
-    } else {
+    if (safeLocked == false) {
       safeLocked = false;
+    } else {
+      safeLocked = true;
     }
 
 //     set the LED with the ledState of the variable:
     digitalWrite(safeLocked, safeLocked);
   }
-return safeLockout ;
+return safeLocked ;
 
   
 }
