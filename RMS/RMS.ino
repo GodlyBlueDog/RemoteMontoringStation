@@ -100,15 +100,10 @@ void setup() {
   Serial.println();
   Serial.print("Connected to the Internet");
   Serial.print("IP address: ");
+  // logEvent("Connected to Wifi");
   //String ip = WiFi.localIP().toString();
   Serial.println(WiFi.localIP());
-
-  // Display IP on TFT
-  //tft.setCursor(0, 60);
-  //tft.setTextSize(2);
- // tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
-  //tft.setTextWrap(true);
-  //tft.print(WiFi.localIP());
+   
 
   routesConfiguration(); // Reads routes from routesManagement
 
@@ -185,7 +180,6 @@ void loop() {
   builtinLED();
   rfidRead();
   tftDrawText(tempetureSens(), ST77XX_WHITE);
-  //dcMotorActivate(24.0);
   fanControl();
   windowBlinds();
   safeStatusDisplay();
@@ -227,7 +221,7 @@ void logEvent(String dataToLog) {
 
 void tftDrawText(String text, uint16_t color) {
   
- 
+ // Draws the temperture and the IP address
   tft.setCursor(0, 0);
   tft.setTextSize(3);
   tft.setTextColor(color, ST77XX_BLACK);
@@ -239,7 +233,7 @@ void tftDrawText(String text, uint16_t color) {
   tft.setTextWrap(true);
   tft.print(WiFi.localIP());
 }
-
+// this function will allow for manual or automatic fan control from the website.
 void automaticFan(float temperatureThreshold ) {
   float c = tempsensor.readTempC();
   myMotor->setSpeed(255);
@@ -252,7 +246,7 @@ void automaticFan(float temperatureThreshold ) {
 
 
 }
-
+//this changes the fan from automatic to manual fan control
 void fanControl() {
   if (automaticFanControl) {
     automaticFan(22.0);
@@ -264,7 +258,7 @@ void fanControl() {
   }
 }
 
-
+//uses the buttons on the LCD monitor to open and close the curtins 
 void windowBlinds() {
   uint32_t buttons = ss.readButtons();
   if (! (buttons & TFTWING_BUTTON_A)) {
@@ -278,7 +272,7 @@ void windowBlinds() {
     blindsOpen = !blindsOpen;
   }
 }
-
+// Takes the temperature
 String tempetureSens() {
 
   // Read and print out the temperature, then convert to *F
@@ -291,7 +285,7 @@ String tempetureSens() {
   return tempC;
 
 }
-
+// uses the rfid reader module to read the rfid cards and prints out their card ID
 void rfidRead() {
 
   String uidOfCardRead = "";
@@ -322,7 +316,7 @@ void rfidRead() {
   }
 
 }
-
+//this updates the trffic light module to display if the safe is locked or not.
 void safeStatusDisplay() {
   /*
      Outputs the status of the Safe Lock to the LEDS
@@ -338,7 +332,7 @@ void safeStatusDisplay() {
   }
 }
 
-
+//Make the safe turn off automaticly after a certain amount of time has passed
 bool safeLockout(){
   unsigned long previousMillis = 0;        // will store last time LED was updated
 
