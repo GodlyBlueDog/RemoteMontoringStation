@@ -23,8 +23,8 @@
     <button class="dropbtn"><strong>Menu</strong></button>
     <div class="dropdown-content">
         <a href="index.html">Home</a>
-        <a href="/admin.html">Admin</a>
-        <a class="active" href="/dashboard.html">Dashboard</a>
+        <a href="admin.html">Admin</a>
+        <a class="active" href="dashboard.html">Dashboard</a>
     </div>
    
 
@@ -48,13 +48,14 @@
         <p>%TEMPERATURE%</p>
     </div>
     <div>
-        <p>Current state of safe</p> <p>%SAFESTATE%</p>
+        <p>Current state of safe</p> 
+        <p>%SAFESTATE%</p>
       <!--  
         <p><a href="/SafeLock">Lock Safe</a></p>
         <p><a href="/SafeUnlock">Unlock Safe</a></p> 
       -->
-        <p> <input type="button" class="BUTTON" onclick="href='/SafeUnlock';" value="Unlock Safe" /> </p>
-        <p> <input type="button" class="BUTTON" onclick="href='/SafeLock';" value="Lock Safe" /> </p>
+        <p> <input type="button" class="BUTTON" onclick="location.href='/SafeUnlock';" value="Unlock Safe" /> </p>
+        <p> <input type="button" class="BUTTON" onclick="location.href='/SafeLock';" value="Lock Safe" /> </p>
     </div>
     
         <div>
@@ -63,14 +64,15 @@
              <!-- 
             <p><a href="/FanManualOn">Turn Fan On</a></p>
             <p><a href="/FanManualOff">Turn Fan Off</a></p>
-            <p><a href="/FanControl">Fan Automatic/Manual</a></p>
+             <p><a.button href="/FanControl">Fan Automatic/Manual</a></p>
+
+            
             -->
 
-            <p> <input type="button" class="BUTTON" onclick="href='/FanManualOn';" value="Turn Fan On" /> </p>
-            <p> <input type="button" class="BUTTON" onclick="href='/FanManualOff';" value="Turn Fan Off" /> </p>
-            <p> <input type="button" class="BUTTON" onclick="href='/FanControl';" value="Fan Automatic/Manual" /> </p>
-
-
+            <p> <input type="button" class="BUTTON" onclick="location.href='/FanManualOn';" value="Turn Fan On" /> </p>
+            <p> <input type="button" class="BUTTON" onclick="location.href='/FanManualOff';" value="Turn Fan Off" /> </p>
+            <p> <input type="button" class="BUTTON" onclick="location.href='/FanControl';" value="Fan Automatic/Manual" /> </p>
+           
 
         </div>
 

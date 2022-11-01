@@ -2,8 +2,7 @@
     display: grid;
     grid-template-columns: auto auto;
     grid-gap: 10px;
-    background-color: #2364AA;
-    padding: 10px;
+    background-color: #2364AA;/FanManual
 }
 
 .grid-container > div {
@@ -29,8 +28,28 @@
       word-break: break-word;
       border: 0;
     }
-.header{
-background-color: #04AA6D;
+    a.button{
+      
+        background: #5E5DF0;
+        border-radius: 999px;
+        box-shadow: #5E5DF0 0 10px 20px -10px;
+        box-sizing: border-box;
+        color: #FFFFFF;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;<h1 style="text-align: center;" class="header">Header</h1>arent;
+        padding: 8px 18px;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        width: fit-content;
+        word-break: break-word;
+        border: 0;
+      }
+
+
+
+    
 
 
 
@@ -84,6 +103,7 @@ padding: 0px;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    transition: all linear 1s;
   }
   
   .dropdown-content a {
@@ -93,10 +113,13 @@ padding: 0px;
     display: block;
   }
   
-  .dropdown-content a:hover {background-color: #f1f1f1}
+  .dropdown-content a:hover {
+    background-color: #f1f1f1}
   
   .dropdown:hover .dropdown-content {
-    display: block;
+    display: block; 
+   
+    
   }
   
   .dropdown:hover .dropbtn {

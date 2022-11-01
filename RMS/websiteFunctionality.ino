@@ -158,6 +158,14 @@ if (var == "FANCONTROL") {
   }
 }
 
+if (var == "SAFESTATE"){
+  if (safeLocked == true){
+    return "Locked";
+    
+  } else 
+  return "Unlocked";
+}
+
 
   // Default "catch" which will return nothing in case the HTML has no variable to replace.
   return String();
