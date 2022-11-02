@@ -71,7 +71,7 @@ padding: 0px;
 
 }
 
-/* Drop down menu instead of a bar attempt*/
+/* Drop down menu instead of a menu bar */
 
 .dropbtn {
     background: #5E5DF0;
@@ -89,21 +89,31 @@ padding: 0px;
     width: fit-content;
     word-break: break-word;
     border: 0;
+    background: linear-gradient(to left, #5E5DF0 50%, #1084c7 50%) right;
+    background-size: 200%;
+    transition: .5s ease-out;
   }
   
   .dropdown {
     position: relative;
     display: inline-block;
+    transition: .3s;
+    -webkit-transition: all 0.3s ease 0s;
   }
   
   .dropdown-content {
-    display: none;
+    visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 4s linear;
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    transition: all linear 1s;
+    transition: .3s;
+    -webkit-transition: all 0.3s ease 0s;
+   /* transition: dropdown-content 2s;         would do the same thing as all of the other code, cant be bothered to fix it*/
+    
   }
   
   .dropdown-content a {
@@ -111,28 +121,34 @@ padding: 0px;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    transition: 0.3s;
+    -webkit-transition: all 0.3s ease 0s;
+   
   }
   
   .dropdown-content a:hover {
-    background-color: #f1f1f1}
-  
+   
+    background: linear-gradient(to left, #5E5DF0 50%,#1084c7 50%) right;
+    background-size: 200%;
+    transition: 1s ease-out;
+    
+  }
   .dropdown:hover .dropdown-content {
-    display: block; 
+    
+    visibility: visible;
+    opacity: 1;
+   
+    
    
     
   }
   
   .dropdown:hover .dropbtn {
-    background-color: #3e8e41;
+    /*background-color: #421ca8; */
+    
+    background-position: left;
   }
-.menuicon{
 
-    width: 35px;
-    height: 5px;
-    background-color: black;
-    margin: 6px 0;
-
-}
 
 
 /* End Dropdown*/
@@ -176,5 +192,5 @@ li a:hover {
 }
 
 .active {
-    background-color: #04AA6D;
+    background-color: #5b6fe0;
 }

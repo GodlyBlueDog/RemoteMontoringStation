@@ -64,6 +64,7 @@ Adafruit_miniTFTWing ss;
 
 // Create the ADT7410 temperature sensor object
 Adafruit_ADT7410 tempsensor = Adafruit_ADT7410();
+float fanTemperatureThreshold = 25.0;
 
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
@@ -249,7 +250,7 @@ void automaticFan(float temperatureThreshold ) {
 //this changes the fan from automatic to manual fan control
 void fanControl() {
   if (automaticFanControl) {
-    automaticFan(22.0);
+    automaticFan(fanTemperatureThreshold);
   }
   if (fanEnabled) {
     myMotor->run(FORWARD);

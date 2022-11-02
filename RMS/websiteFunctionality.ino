@@ -119,6 +119,16 @@ server.on("/FanControl",  HTTP_GET, [](AsyncWebServerRequest * request) {
   logEvent("Fan Manual Control: On");
   request->send(SPIFFS, "/dashboard.html", "text/html", false, processor);
 });
+//
+//server.on("/setTemperatureThreshold", HTTP_GET,  [](AsyncWebServerRequest * request) {
+ // int newThreshold; 
+ // if (request->hasParam(PARAM_INPUT_1)) {
+ //   fanTemperatureThreshold = request->getParam(PARAM_INPUT_1)->value().toFloat();
+ //   String logMessage = "Administrator set Automatic Fan Theshold to" + String(fanTemperatureThreshold);
+ //   logEvent(logMessage);
+ // }
+//  request->send(SPIFFS, "/admin.html", "text/html", false, processor);
+//});
 
   
 }
@@ -164,6 +174,10 @@ if (var == "SAFESTATE"){
     
   } else 
   return "Unlocked";
+}
+
+if (var == "CURRENTTHRESHOLD") {
+  return String(fanTemperatureThreshold);
 }
 
 
