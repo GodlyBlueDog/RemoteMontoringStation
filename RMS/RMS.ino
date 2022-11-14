@@ -185,6 +185,7 @@ void loop() {
   windowBlinds();
   safeStatusDisplay();
   safeLockout(); 
+  tempetureSens();
   delay(LOOPDELAY); // To allow time to publish new code.
 }
 
@@ -282,8 +283,11 @@ String tempetureSens() {
   //Serial.print("Temp: "); Serial.print(c); Serial.print("*C\t");
   //Serial.print(f); Serial.println("*F");
   String tempC = String(c);
-  String tempF = String(f);
-  return tempC;
+ // String tempInC = String(c);
+ // tempInC += " C"; //shows degrees 
+ // tftDrawText(tempInC, ST77XX_WHITE);
+return tempC;
+  delay(100);
 
 }
 // uses the rfid reader module to read the rfid cards and prints out their card ID

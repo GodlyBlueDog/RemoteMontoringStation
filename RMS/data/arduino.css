@@ -128,7 +128,7 @@ padding: 0px;
   
   .dropdown-content a:hover {
    
-    background: linear-gradient(to left, #5E5DF0 50%,#1084c7 50%) right;
+    background: linear-gradient(to left, #1084c7 50%, #5E5DF0  50%) right;
     background-size: 200%;
     transition: 1s ease-out;
     
