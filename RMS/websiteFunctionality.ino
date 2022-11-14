@@ -105,7 +105,7 @@ server.on("/FanManualOn",  HTTP_GET, [](AsyncWebServerRequest * request) {
 
 
 server.on("/FanManualOff",  HTTP_GET, [](AsyncWebServerRequest * request) {
-  if (!request->authenticate(usernameGuest, passwordGuest))
+  if (!request->authenticate(usernameGuest, passwordGuest)&&!!(request->authenticate(usernameAdmin, passwordAdmin))
     return request->requestAuthentication();
   fanEnabled = false;
   logEvent("Fan Manual Control: Off");
