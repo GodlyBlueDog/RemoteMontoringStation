@@ -8,10 +8,10 @@
 
 
 // Wifi & Webserver
-#include "WiFi.h"
-#include "SPIFFS.h"
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include "WiFi.h" // gives wifi functionality to the ESP32, comes installed by defult with the ESP32 board
+#include "SPIFFS.h" //used as file storage and provides website functionality.
+#include <AsyncTCP.h> //enables asynchronous TCP connections 
+#include <ESPAsyncWebServer.h> //enables us to setup a webserver from the ESP32
 
 #include <Adafruit_MotorShield.h>
 bool fanEnabled = false;            // If the fan is on or off.
